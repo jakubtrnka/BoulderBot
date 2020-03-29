@@ -1,0 +1,30 @@
+1. change TELEGRAM_BOT_x_NAME, TELEGRAM_BOT_x_TOKEN correspondingly to your bots
+2. put generated certificates/keys (telegram_bot_backend.*) into /etc/nginx/certs
+3. start service on dedicated ports for specific bots: here 15561, 15562 respectively for two bots
+
+    server {
+            listen 8443 ssl;
+            ssl_certificate certs/telegram_bot_backend.pem;
+            ssl_certificate_key certs/telegram_bot_backend.key;
+            # ssl_protocols TLSv1.3;
+            ssl_ciphers  HIGH:!aNULL:!MD5;
+
+            location = /TELEGRAM_BOT_1_NAME/TELEGRAM_BOT_1_ACCESS_TOKEN {
+                proxy_pass              http://127.0.0.1:15561/TELEGRAM_BOT_1_NAME/TELEGRAM_BOT1_ACCESS_TOKEN/;
+                proxy_pass_request_headers on;
+                proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header Host $http_host;
+                proxy_redirect off;
+            }
+
+            location  = /TELEGRAM_BOT_2_NAME/TELEGRAM_BOT_2_ACCESS_TOKEN {
+                proxy_pass              http://127.0.0.1:15562/TELEGRAM_BOT_2_NAME/TELEGRAM_BOT2_ACCESS_TOKEN/;
+                proxy_pass_request_headers on;
+                proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header Host $http_host;
+                proxy_redirect off;
+            }
+
+            ....
+    }
+
