@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
+use std::slice::Iter;
 
 #[derive(Serialize, Deserialize, Debug)]
-enum ChatType {
+pub(super) enum ChatType {
     #[serde(rename = "private")]
     Private,
 }
@@ -13,43 +14,43 @@ impl Default for ChatType {
 }
 
 #[derive(Serialize, Deserialize, Default, Debug)]
-pub struct Chat {
+pub(super) struct Chat {
     #[serde(default)]
-    first_name: String,
-    id: i32,
+    pub(super) first_name: String,
+    pub(super) id: i32,
     #[serde(default)]
-    last_name: String,
+    pub(super) last_name: String,
     #[serde(rename = "type")]
-    chat_type: ChatType,
+    pub(super) chat_type: ChatType,
     #[serde(default)]
-    username: String,
+    pub(super) username: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Default)]
-pub struct MessageOriginator {
-    first_name: String,
+pub(super) struct MessageOriginator {
+    pub(super) first_name: String,
     id: i32,
-    is_bot: bool,
-    language_code: String,
-    last_name: String,
-    username: String,
+    pub(super) is_bot: bool,
+    pub(super) language_code: String,
+    pub(super) last_name: String,
+    pub(super) username: String,
 }
 
 #[derive(Serialize, Deserialize, Default, Debug)]
 pub struct Message {
-    chat: Chat,
-    date: u64,
+    pub(super) chat: Chat,
+    pub(super) date: u64,
     #[serde(default)]
-    from: MessageOriginator,
+    pub(super) from: MessageOriginator,
     #[serde(default)]
-    entities: Vec<MessageEntity>,
-    message_id: i32,
+    pub(super) entities: Vec<MessageEntity>,
+    pub(super) message_id: i32,
     #[serde(default)]
-    pub text: String,
+    pub(super) text: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub enum EntityType {
+pub(super) enum EntityType {
     #[serde(rename = "mention")]
     Mention,
     #[serde(rename = "hashtag")]
@@ -83,33 +84,36 @@ pub enum EntityType {
 }
 
 #[derive(Serialize, Deserialize, Default, Debug)]
-pub struct MessageEntity {
+pub(super) struct MessageEntity {
     #[serde(rename = "type")]
-    entity_type: Option<EntityType>,
-    offset: i32,
-    length: usize,
+    pub(super) entity_type: Option<EntityType>,
+    pub(super) offset: usize,
+    pub(super) length: usize,
     #[serde(default)]
-    url: String,
-    //user: User,
+    pub(super) url: String,
+    //pub(super) user: User,
     #[serde(default)]
-    language: String,
+    pub(super) language: String,
 }
 
 impl Message {
     pub fn reply(&self, text: String) -> SendMessage {
         SendMessage::new(self.chat.id, text)
     }
+    pub fn raw_text(&self) -> std::str::Chars {
+        self.text.chars()
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct SendMessage {
-    method: String,
-    chat_id: i32,
-    text: String,
+    pub(super) method: String,
+    pub(super) chat_id: i32,
+    pub(super) text: String,
 }
 
 impl SendMessage {
-    fn new(chat_id: i32, text: String) -> Self {
+    pub(super) fn new(chat_id: i32, text: String) -> Self {
         Self {
             method: "sendMessage".to_owned(),
             chat_id,

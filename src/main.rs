@@ -23,7 +23,7 @@ async fn handle(req: Request<Body>) -> io::Result<Response<Body>> {
 }
 #[tokio::main]
 async fn main() -> io::Result<()> {
-    let addr = SocketAddr::from(([127, 0, 0, 1], 15562));
+    let addr = SocketAddr::from(([127, 0, 0, 1], 15561));
 
     let make_service = make_service_fn(|_conn| async { Ok::<_, Infallible>(service_fn(handle)) });
     let server = Server::bind(&addr).serve(make_service);

@@ -1,18 +1,7 @@
 mod interpreter;
 
 pub fn process_push_notification(raw_msg: Vec<u8>) -> String {
-    if let Ok(update) = serde_json::from_slice::<interpreter::WebHookMsg>(&raw_msg) {
-        let mut ctr = 0;
-        for char in update.message.text.chars() {
-            if char == 'a' || char == 'A' {
-                ctr += 1;
-            }
-        }
-        let x = format!("počet áček je: {}", ctr);
-        let resp = update.message.reply(x);
-        serde_json::to_string(&resp).unwrap_or_default()
-    } else {
-        dbg!("chyba");
-        String::new()
-    }
+    // let val: serde_json::Value = serde_json::from_slice(&raw_msg).unwrap_or_default();
+    // println!("{}", serde_json::ser::to_string_pretty(&val).unwrap_or_default());
+    interpreter::interpret(raw_msg)
 }
