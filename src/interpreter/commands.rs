@@ -1,15 +1,17 @@
 use super::Message;
-use crate::interpreter::commands::BotCommands::JoinChallenge;
 use crate::interpreter::messages::EntityType;
 use std::collections::HashSet;
 
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub enum BotCommands {
-    JoinChallenge(String),
-    LeaveChallege(String),
+    Start(String),
+    Join(String),
+    Leave(String),
     Flash(String),
     Complete(String),
-    TerminateChallenge(String),
+    Abandon(String),
+    Results(String),
+    Terminate(String),
 }
 
 impl BotCommands {
@@ -17,6 +19,9 @@ impl BotCommands {
     const LEAVE: &'static str = "/leave";
     const FLASH: &'static str = "/flash";
     const COMPLETE: &'static str = "/complete";
+    const ABANDON: &'static str = "/abandon";
+    const RESULTS: &'static str = "/results";
+    const START: &'static str = "/start";
     const TERMINATE: &'static str = "/terminate";
 
     pub(super) fn from_msg(msg: &Message) {
@@ -42,20 +47,30 @@ impl BotCommands {
                             .to_owned();
                         match cmd.as_str() {
                             Self::JOIN => {
-                                dbg!(args);
+                                cmd_set.insert(Self::Join(args));
                             }
                             Self::LEAVE => {
-                                dbg!(utf16);
+                                cmd_set.insert(Self::Leave(args));
                             }
-                            Self::JOIN => {
-                                dbg!(utf16);
+                            Self::START => {
+                                cmd_set.insert(Self::Start(args));
                             }
-                            Self::JOIN => {
-                                dbg!(utf16);
+                            Self::TERMINATE => {
+                                cmd_set.insert(Self::Terminate(args));
                             }
-                            _ => {
-                                dbg!("none");
+                            Self::FLASH => {
+                                cmd_set.insert(Self::Flash(args));
                             }
+                            Self::COMPLETE => {
+                                cmd_set.insert(Self::Complete(args));
+                            }
+                            Self::ABANDON => {
+                                cmd_set.insert(Self::Abandon(args));
+                            }
+                            Self::RESULTS => {
+                                cmd_set.insert(Self::Results(args));
+                            }
+                            _ => {}
                         }
                     }
                     EntityType::Url => unimplemented!(),
@@ -72,5 +87,6 @@ impl BotCommands {
                 }
             }
         }
+        println!("{:?}", cmd_set);
     }
 }
